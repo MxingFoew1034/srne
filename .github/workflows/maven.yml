@@ -28,7 +28,7 @@ jobs:
     - name: Compile Java source files
       run: |
         mkdir -p target/classes
-        javac -d target/classes src/main/java/MAIN.java  # 编译 src 目录中的所有 .java 文件
+        javac -d target/classes srne/src/main/java/MAIN.java  # 编译 src 目录中的所有 .java 文件
 
     # Step 4: Run the Java application
     - name: Run Java class
