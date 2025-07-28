@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '8.0.292'  # 使用 JDK 8 的具体版本
-        distribution: 'adoptopenjdk'  # 设置 JDK 发行版为 AdoptOpenJDK
+        distribution: 'zulu'  # 设置 JDK 发行版为 AdoptOpenJDK
 
     # Step 3: Compile the Java source code
     - name: Compile Java source files
