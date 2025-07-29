@@ -8,7 +8,7 @@ import uuid
 import datetime
 import cpuinfo
 import GPUtil
-from uptime import uptime
+import time
 
 def get_system_info():
     info = {
@@ -22,7 +22,7 @@ def get_system_info():
             "processor": platform.processor(),
             "cpu_info": cpuinfo.get_cpu_info()['brand_raw'],
             "boot_time": datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S"),
-            "uptime": str(datetime.timedelta(seconds=uptime())),
+            "uptime": str(datetime.timedelta(seconds=time.time() - psutil.boot_time())),
             "local_ip": socket.gethostbyname(socket.gethostname()),
             "mac_address": ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0,2*6,2)][::-1])
         },
