@@ -8,16 +8,10 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      python-version:
-        description: 'Python version to use (e.g. 3.8, 3.9)'
-        required: false
-        default: '3.x'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -25,12 +19,32 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ github.event.inputs.python-version || '3.x' }}
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install psutil requests
+        pip install psutil requests py-cpuinfo gputil python-uptime
 
-    - name: Run script
-      run: python your_script.py
+    - name: Run script and save output
+      run: |
+        python system_info.py > system_info.json
+        echo "SYSTEM_INFO=$(cat system_info.json)" >> $GITHUB_ENV
+        VERSION=$(date +"%Y-%m-%d-%H-%M-%S")-${GITHUB_RUN_ID}
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "system_info_${VERSION}.json" > artifact_name.txt
+
+    - name: Create release artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: system_info_${{ env.VERSION }}.json
+        path: system_info.json
+
+    - name: Create GitHub Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: sysinfo-${{ env.VERSION }}
+        name: "System Info ${{ env.VERSION }}"
+        body: "Automated system information report"
+        files: system_info.json
