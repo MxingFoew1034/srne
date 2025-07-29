@@ -7,7 +7,6 @@ import socket
 import uuid
 import datetime
 import cpuinfo
-import GPUtil
 import time
 
 def get_system_info():
@@ -55,8 +54,7 @@ def get_system_info():
                 "swap_used": f"{psutil.swap_memory().used / (1024**3):.2f} GB",
                 "swap_free": f"{psutil.swap_memory().free / (1024**3):.2f} GB"
             },
-            "disks": [],
-            "gpu": []
+            "disks": []
         },
         "network": {
             "public_ip": requests.get('https://api.ipify.org').text,
@@ -76,21 +74,6 @@ def get_system_info():
             "free": f"{usage.free / (1024**3):.2f} GB",
             "percent": f"{usage.percent}%"
         })
-
-    try:
-        gpus = GPUtil.getGPUs()
-        for gpu in gpus:
-            info["hardware"]["gpu"].append({
-                "id": gpu.id,
-                "name": gpu.name,
-                "load": f"{gpu.load*100}%",
-                "memory_total": f"{gpu.memoryTotal} MB",
-                "memory_used": f"{gpu.memoryUsed} MB",
-                "memory_free": f"{gpu.memoryFree} MB",
-                "temperature": f"{gpu.temperature} °C"
-            })
-    except:
-        pass
 
     for conn in psutil.net_connections(kind='inet'):
         info["network"]["connections"].append({
