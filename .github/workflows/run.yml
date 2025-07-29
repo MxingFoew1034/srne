@@ -19,26 +19,25 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'  
+        python-version: '3.11'
 
-    - name: Install Python dependencies
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install psutil requests py-cpuinfo gputil setuptools
+        pip install psutil requests py-cpuinfo
 
     - name: Run script and save output
       run: |
         python system_info.py > system_info.json
-        echo "SYSTEM_INFO=$(cat system_info.json)" >> $GITHUB_ENV
         VERSION=$(date +"%Y-%m-%d-%H-%M-%S")-${GITHUB_RUN_ID}
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
-        echo "system_info_${VERSION}.json" > artifact_name.txt
+        mv system_info.json system_info_${VERSION}.json
 
     - name: Create release artifact
       uses: actions/upload-artifact@v4
       with:
         name: system_info_${{ env.VERSION }}.json
-        path: system_info.json
+        path: system_info_${{ env.VERSION }}.json
 
     - name: Create GitHub Release
       if: github.ref == 'refs/heads/main'
@@ -47,4 +46,4 @@ jobs:
         tag_name: sysinfo-${{ env.VERSION }}
         name: "System Info ${{ env.VERSION }}"
         body: "Automated system information report"
-        files: system_info.json
+        files: system_info_${{ env.VERSION }}.json
