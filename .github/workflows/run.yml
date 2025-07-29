@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
@@ -35,14 +35,14 @@ jobs:
         echo "system_info_${VERSION}.json" > artifact_name.txt
 
     - name: Create release artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: system_info_${{ env.VERSION }}.json
         path: system_info.json
 
     - name: Create GitHub Release
       if: github.ref == 'refs/heads/main'
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: sysinfo-${{ env.VERSION }}
         name: "System Info ${{ env.VERSION }}"
