@@ -9,7 +9,6 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    # 每天北京时间 00:00 运行（UTC时间 16:00，因为 GitHub Actions 使用 UTC）
     - cron: '0 16 * * *'
 
 jobs:
