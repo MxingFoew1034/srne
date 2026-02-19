@@ -1,15 +1,13 @@
 name: Python CI Workflow
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
-  schedule:
-    - cron: '0 16 * * *'
+    inputs:
+      version_tag:
+        description: 'Custom version tag (optional)'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   build:
@@ -31,7 +29,11 @@ jobs:
     - name: Run script and save output
       run: |
         python system_info.py > system_info.json
-        VERSION=$(date +"%Y-%m-%d-%H-%M-%S")-${GITHUB_RUN_ID}
+        if [ -n "${{ github.event.inputs.version_tag }}" ]; then
+          VERSION="${{ github.event.inputs.version_tag }}"
+        else
+          VERSION=$(date +"%Y-%m-%d-%H-%M-%S")-${GITHUB_RUN_ID}
+        fi
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
         mv system_info.json system_info_${VERSION}.json
 
